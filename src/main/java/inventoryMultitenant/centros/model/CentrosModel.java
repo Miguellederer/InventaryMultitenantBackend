@@ -4,7 +4,6 @@ package inventoryMultitenant.centros.model;
 /**
 * @author Miguel Lederer
 * @author Oliver Cruz
-* @author Luis García
 * @version 1.0
 * 20/02/2026
 * */

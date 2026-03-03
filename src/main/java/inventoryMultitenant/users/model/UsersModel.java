@@ -1,5 +1,13 @@
 package inventoryMultitenant.users.model;
 
+
+/**
+* @author Miguel Lederer
+* @author Oliver Cruz
+* @version 1.0
+* 20/02/2026
+* */
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import inventoryMultitenant.centros.model.CentrosModel;
 import inventoryMultitenant.config.AuditorialModel;

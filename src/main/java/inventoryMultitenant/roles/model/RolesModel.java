@@ -1,9 +1,21 @@
 package inventoryMultitenant.roles.model;
 
+
+/**
+* @author Miguel Lederer
+* @author Oliver Cruz
+* @version 1.0
+* 20/02/2026
+* */
+
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import inventoryMultitenant.config.AuditorialModel;
 import inventoryMultitenant.users.model.UsersModel;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,12 +26,14 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "roles")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class RolesModel extends AuditorialModel {
 
     @Id
@@ -38,6 +52,10 @@ public class RolesModel extends AuditorialModel {
 
     @OneToMany(mappedBy = "role")
     private List<UsersModel> users = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RolesPermisos> rolesPermisos = new ArrayList<>();
 
 
 }
