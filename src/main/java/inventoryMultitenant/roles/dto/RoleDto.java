@@ -3,8 +3,7 @@ package inventoryMultitenant.roles.dto;
 import lombok.Data;
 
 @Data
-public class RolesRequestDto {
-
+public class RoleDto {
     private String nombre;
     private String descripcion;
 

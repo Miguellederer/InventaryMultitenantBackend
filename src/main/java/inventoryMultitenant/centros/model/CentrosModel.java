@@ -11,7 +11,6 @@ package inventoryMultitenant.centros.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import inventoryMultitenant.config.AuditorialModel;
 import inventoryMultitenant.empresas.model.EmpresasModel;
 import inventoryMultitenant.users.model.UsersModel;
@@ -30,12 +29,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Table(name = "centros")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class CentrosModel extends AuditorialModel {
 
     @Id
@@ -68,5 +69,7 @@ public class CentrosModel extends AuditorialModel {
 
     @OneToMany(mappedBy = "centro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UsersModel> users = new ArrayList<>();
+
+  
 
 }
