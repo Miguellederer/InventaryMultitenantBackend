@@ -1,5 +1,18 @@
 package inventoryMultitenant.users.model;
 
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+/**
+* @author Miguel Lederer
+* @author Oliver Cruz
+* @version 1.0
+* 20/02/2026
+* */
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import inventoryMultitenant.centros.model.CentrosModel;
 import inventoryMultitenant.config.AuditorialModel;
@@ -16,14 +29,18 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
+@Getter
+@Setter
 
-public class UsersModel extends AuditorialModel {
+public class UsersModel extends AuditorialModel implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,5 +65,35 @@ public class UsersModel extends AuditorialModel {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private RolesModel role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return role.getRolesPermisos()
+                .stream()
+                .map(rp -> new SimpleGrantedAuthority(
+                        rp.getPermiso().getCodigo()))
+                .toList();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

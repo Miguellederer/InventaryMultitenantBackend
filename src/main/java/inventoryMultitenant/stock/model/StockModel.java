@@ -1,5 +1,12 @@
 package inventoryMultitenant.stock.model;
 
+/**
+* @author Miguel Lederer
+* @author Oliver Cruz
+* @version 1.0
+* 20/02/2026
+* */
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import inventoryMultitenant.almacenes.model.AlmacenModel;
 import inventoryMultitenant.config.AuditorialModel;

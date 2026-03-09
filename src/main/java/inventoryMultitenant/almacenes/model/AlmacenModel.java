@@ -1,5 +1,13 @@
 package inventoryMultitenant.almacenes.model;
 
+
+/**
+* @author Miguel Lederer
+* @author Oliver Cruz
+* @version 1.0
+* 20/02/2026
+* */
+
 import java.util.ArrayList;
 import java.util.List;
 import inventoryMultitenant.centros.model.CentrosModel;
