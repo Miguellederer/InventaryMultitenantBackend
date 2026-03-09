@@ -1,5 +1,10 @@
 package inventoryMultitenant.users.model;
 
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
 * @author Miguel Lederer
@@ -35,7 +40,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class UsersModel extends AuditorialModel {
+public class UsersModel extends AuditorialModel implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -60,5 +65,35 @@ public class UsersModel extends AuditorialModel {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private RolesModel role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return role.getRolesPermisos()
+                .stream()
+                .map(rp -> new SimpleGrantedAuthority(
+                        rp.getPermiso().getCodigo()))
+                .toList();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

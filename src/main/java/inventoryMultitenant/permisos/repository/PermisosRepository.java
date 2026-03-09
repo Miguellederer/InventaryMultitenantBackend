@@ -10,6 +10,8 @@ public interface PermisosRepository extends JpaRepository<PermisosModel, String>
 
     Optional<PermisosModel> findByCodigo(String codigo);
 
+    boolean existsByCodigo(String codigo);
+
 
     
 

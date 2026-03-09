@@ -10,9 +10,7 @@ package inventoryMultitenant.roles.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import inventoryMultitenant.config.AuditorialModel;
 import inventoryMultitenant.users.model.UsersModel;
 import jakarta.persistence.CascadeType;

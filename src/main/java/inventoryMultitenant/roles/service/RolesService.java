@@ -1,58 +1,74 @@
 package inventoryMultitenant.roles.service;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import inventoryMultitenant.permisos.model.PermisosModel;
 import inventoryMultitenant.permisos.repository.PermisosRepository;
+import inventoryMultitenant.roles.dto.AllRolesDto;
 import inventoryMultitenant.roles.dto.RoleDto;
-import inventoryMultitenant.roles.dto.RolePermisosDto;
+import inventoryMultitenant.roles.dto.RolesPermisosDto;
+import inventoryMultitenant.roles.dto.RolesRequestDto;
 import inventoryMultitenant.roles.interfaces.RolesServiceImp;
 import inventoryMultitenant.roles.model.RolesModel;
 import inventoryMultitenant.roles.model.RolesPermisos;
 import inventoryMultitenant.roles.repository.RolesPermisoRepository;
 import inventoryMultitenant.roles.repository.RolesRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RolesService implements RolesServiceImp {
 
     private final RolesRepository rolesRepository;
     private final PermisosRepository permisosRepository;
     private final RolesPermisoRepository rolesPermisoRepository;
 
+    // Crear Role y sus
     @Override
-    public void asignarPermisos(String id, List<String> codigosPermisos) {
-
-        RolesModel role = rolesRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role no encontrado: " + id));
-
-        for (String codigo : codigosPermisos) {
-
-            PermisosModel permiso = permisosRepository.findByCodigo(codigo)
-                    .orElseThrow(() -> new RuntimeException("Permiso no encontrado: " + codigo));
-
-            RolesPermisos rp = new RolesPermisos();
-            rp.setRole(role);
-            rp.setPermiso(permiso);
-
-            rolesPermisoRepository.save(rp);
-        }
-    }
-
-    @Override
-    public RolesModel crearRole(RoleDto dto) {
+    @Transactional
+    public RolesModel crearRole(RolesRequestDto dto) {
 
         RolesModel role = new RolesModel();
         role.setNombre(dto.getNombre());
         role.setDescripcion(dto.getDescripcion());
 
-        return rolesRepository.save(role);
+        role = rolesRepository.save(role);
+
+        if (dto.getPermisos() != null) {
+
+            for (String codigo : dto.getPermisos()) {
+
+                PermisosModel permiso = permisosRepository.findByCodigo(codigo)
+                        .orElseThrow(() -> new RuntimeException("Permiso no encontrado: " + codigo));
+                RolesPermisos rp = new RolesPermisos();
+                rp.setRole(role);
+                rp.setPermiso(permiso);
+                rolesPermisoRepository.save(rp);
+            }
+        }
+        return role;
     }
 
+    // Listar Roles y sus permisos
     @Override
-    public List<RolesModel> listarRoles() {
-        return rolesRepository.findAll();
+    public Page<AllRolesDto> listarRoles(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<RolesModel> roles = rolesRepository.findRoles(pageable);
+
+        return roles.map(role -> {
+            AllRolesDto dto = new AllRolesDto();
+            dto.setRoleId(role.getId());
+            dto.setNombre(role.getNombre());
+            dto.setDescripcion(role.getDescripcion());
+            return dto;
+        });
     }
 
     @Override
@@ -78,7 +94,7 @@ public class RolesService implements RolesServiceImp {
     }
 
     @Override
-    public RolePermisosDto obtenerPermisosAsignados(String id) {
+    public RolesPermisosDto obtenerPermisosAsignados(String id) {
 
         RolesModel role = rolesRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -89,7 +105,7 @@ public class RolesService implements RolesServiceImp {
                 .map(rp -> rp.getPermiso().getCodigo())
                 .toList();
 
-        RolePermisosDto response = new RolePermisosDto();
+        RolesPermisosDto response = new RolesPermisosDto();
 
         response.setRoleId(role.getId());
         response.setNombreRole(role.getNombre());
@@ -97,4 +113,5 @@ public class RolesService implements RolesServiceImp {
 
         return response;
     }
+
 }

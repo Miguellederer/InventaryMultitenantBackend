@@ -1,17 +1,17 @@
 package inventoryMultitenant.roles.interfaces;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import inventoryMultitenant.roles.dto.AllRolesDto;
 import inventoryMultitenant.roles.dto.RoleDto;
-import inventoryMultitenant.roles.dto.RolePermisosDto;
+import inventoryMultitenant.roles.dto.RolesPermisosDto;
+import inventoryMultitenant.roles.dto.RolesRequestDto;
 import inventoryMultitenant.roles.model.RolesModel;
 
 public interface RolesServiceImp {
 
-    void asignarPermisos(String id, List<String> codigoPermisos);
+    RolesModel crearRole(RolesRequestDto dto);
 
-    RolesModel crearRole(RoleDto dto);
-
-    List<RolesModel> listarRoles();
+    Page<AllRolesDto> listarRoles(int page, int size);
 
     RolesModel obtenerRole(String id);
 
@@ -19,8 +19,7 @@ public interface RolesServiceImp {
 
     void eliminarRole(String id);
 
-    RolePermisosDto obtenerPermisosAsignados(String id);
+    RolesPermisosDto obtenerPermisosAsignados(String id);
 
-    
 
 }

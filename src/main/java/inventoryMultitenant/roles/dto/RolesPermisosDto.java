@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class RolePermisosDto {
+public class RolesPermisosDto {
 
     private String roleId;
     private String nombreRole;

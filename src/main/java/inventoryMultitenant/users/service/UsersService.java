@@ -1,12 +1,20 @@
 package inventoryMultitenant.users.service;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import inventoryMultitenant.centros.model.CentrosModel;
 import inventoryMultitenant.centros.repository.CentrosRepository;
+import inventoryMultitenant.empresas.dto.AllEmpresasDto;
+import inventoryMultitenant.empresas.model.EmpresasModel;
 import inventoryMultitenant.roles.model.RolesModel;
 import inventoryMultitenant.roles.repository.RolesRepository;
+import inventoryMultitenant.users.dto.AllusersDto;
+import inventoryMultitenant.users.dto.UsersDto;
 import inventoryMultitenant.users.dto.UsersRequestDto;
 import inventoryMultitenant.users.dto.UsersResponseDto;
 import inventoryMultitenant.users.interfaces.UsersServiceImpl;
@@ -21,7 +29,7 @@ public class UsersService implements UsersServiceImpl {
         private final UsersRepository usersRepository;
         private final RolesRepository rolesRepository;
         private final CentrosRepository centrosRepository;
-        private final ModelMapper modelMapper;
+        private final PasswordEncoder passwordEncoder;
 
         @Override
         public UsersResponseDto crearUsuario(UsersRequestDto request) {
@@ -34,7 +42,7 @@ public class UsersService implements UsersServiceImpl {
 
                 UsersModel user = new UsersModel();
                 user.setUsername(request.getUsername());
-                user.setPassword(request.getPassword());
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
                 user.setRole(role);
                 user.setCentro(centro);
 
@@ -50,4 +58,19 @@ public class UsersService implements UsersServiceImpl {
                 return dto;
         }
 
+        @Override
+        public Page<AllusersDto> listarUsers(int page, int size) {
+
+                Pageable pageable = PageRequest.of(page, size);
+
+                Page<UsersModel> pageResult = usersRepository.findAll(pageable);
+
+                return pageResult.map(user -> {
+                        AllusersDto dto = new AllusersDto();
+                        dto.setUsername(user.getUsername());
+                        dto.setCentro(user.getCentro().getNombre());
+                        dto.setRole(user.getRole().getNombre());
+                        return dto;
+                });
+        }
 }

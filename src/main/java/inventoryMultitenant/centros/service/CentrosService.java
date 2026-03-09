@@ -1,7 +1,11 @@
 package inventoryMultitenant.centros.service;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import inventoryMultitenant.centros.dto.AllCentrosDto;
 import inventoryMultitenant.centros.dto.CentrosRequestDto;
 import inventoryMultitenant.centros.dto.CentrosResponseDto;
 import inventoryMultitenant.centros.interfaces.CentrosServiceImp;
@@ -38,6 +42,24 @@ public class CentrosService implements CentrosServiceImp {
         response.setEmpresa(savedCentro.getEmpresas().getNombre());
 
         return response;
+    }
+
+    @Override
+    public Page<AllCentrosDto> listarCentros(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CentrosModel> pageResult = centrosRepository.findAll(pageable);
+
+        return pageResult.map(centro -> {
+            AllCentrosDto dto = new AllCentrosDto();
+            dto.setId(centro.getId());
+            dto.setNombre(centro.getNombre());
+            dto.setDireccion(centro.getDireccion());
+            dto.setCorreo(centro.getCorreo());
+            dto.setContacto(centro.getContacto());
+            return dto;
+        });
     }
 
 }
